@@ -281,7 +281,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
                     return {
                         url: 'https://openrouter.ai/api/v1/chat/completions',
                         model: 'meta-llama/llama-4-maverick:free',
-                        headers: { 'Content-Type': 'application/json' } // Fixed: Removed trailing comma and Authorization header
+                        headers: { 'Authorization': `Bearer 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`, 'Content-Type': 'application/json' } // Fixed: Removed trailing comma and Authorization header
                     };
                 default:
                     throw new Error('Invalid API provider selected.');
