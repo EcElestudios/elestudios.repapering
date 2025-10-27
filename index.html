@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repapering|Extract questions from papers</title>
+    <title>Repapering|Extract questions</title>
     <!-- Load PDF.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs" type="module"></script>
     <!-- Load Mammoth.js for .doc/.docx parsing -->
@@ -200,9 +200,7 @@
         </select>
         
         <div id="apiKeyContainer"> <!-- Line 162 -->
-            <label for="apiKey">API Key (Optional for OpenRouter Non-BYOK):</label> <!-- Line 163 -->
-            <input type="password" id="apiKey" placeholder="Enter your API key if required"> <!-- Line 164 -->
-            <button type="button" id="toggleApiKey" onclick="toggleApiKeyVisibility()">Show</button> <!-- Line 165 -->
+            <input type="password" id="apiKey" placeholder="Enter your API key if required">
         </div>
         
         <label for="fileType">File Type:</label> <!-- Line 168 -->
