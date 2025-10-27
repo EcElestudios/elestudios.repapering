@@ -1,17 +1,4 @@
-To create a homepage for the "Repapering | Extract Questions" application that mirrors the clean, professional, and user-focused design of the Microsoft Teams login page (https://www.microsoft.com/en-us/microsoft-teams/log-in), I'll adapt the original code's style while incorporating a similar layout, color scheme, and user-friendly elements. The Microsoft Teams page features a centered layout, a prominent call-to-action (CTA), a background image, and a modern, minimalistic design. Below is a new homepage designed to align with these characteristics while maintaining the original code's functionality and purpose.
 
-### Design Goals
-- **Layout**: Centered content with a hero section, featuring a headline, description, and CTA button to access the main application.
-- **Style**: Use a color palette inspired by Microsoft Teams (blues, whites, and grays) while retaining the original code's `--primary`, `--secondary`, `--text`, and `--background` variables for consistency.
-- **Background**: Include a subtle background image or gradient similar to Microsoft Teams' aesthetic.
-- **CTA**: A prominent button linking to the original application page (assumed to be the provided code).
-- **Responsive**: Ensure the design is mobile-friendly, matching the original code's responsive media queries.
-- **Branding**: Emphasize the "Repapering | Extract Questions" branding with a professional tone.
-
-Since the original code is the main application, this homepage will serve as an entry point, linking to the original functionality. I'll assume the original code is hosted at a separate route (e.g., `/app.html`) and create a new HTML file for the homepage.
-
-### Homepage Code
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -198,37 +185,3 @@ Since the original code is the main application, this homepage will serve as an 
     </footer>
 </body>
 </html>
-```
-
-### Explanation of Design Choices
-1. **Layout and Structure**:
-   - The homepage uses a centered hero section, similar to the Microsoft Teams login page, with a clear headline, descriptive text, and a prominent "Get Started" button linking to the original application (assumed at `/app.html`).
-   - A features section highlights key functionalities, styled in a grid layout to showcase multi-format support, AI accuracy, and answer verification.
-   - The footer includes links to xAI, API access, and X Premium, aligning with the original code's references and xAI's product guidelines.
-
-2. **Styling**:
-   - **Colors**: Retains the original code's `--primary` (#1a73e8), `--secondary` (#f1f3f4), `--text` (#202124), and `--background` (#f8f9fa) for consistency, with an added `--accent` (#0052cc) inspired by Microsoft Teams' darker blue for hover effects.
-   - **Background**: Uses a subtle gradient overlay on a professional background image (sourced from Unsplash) to mimic the Teams page's clean aesthetic.
-   - **Typography**: Uses the Roboto font, consistent with the original code, with weights (300, 400, 500, 700) to match the professional tone.
-   - **Button**: The CTA button mirrors the original code's button styling (padding, border-radius, hover effects) but is larger and centered for prominence, similar to the Teams "Sign in" button.
-
-3. **Responsiveness**:
-   - Media queries at 768px and 480px ensure the layout adapts to tablets and mobile devices, reducing font sizes, padding, and switching the features grid to a single column on small screens, consistent with the original code's responsive design.
-
-4. **Content**:
-   - The headline and description are concise, emphasizing the application's purpose and ease of use, similar to the Teams page's focus on clarity.
-   - The features section highlights the application's strengths, making it approachable like the Teams page's marketing approach.
-   - The footer provides context and links, aligning with xAI's product guidelines (e.g., redirecting to https://x.ai/api for API details).
-
-5. **Assumptions**:
-   - The original code is assumed to be the main application, accessible at `/app.html`. If the application is hosted differently, update the `<a href="/app.html">` link in the CTA button.
-   - The background image is a placeholder from Unsplash; replace it with a custom image if desired (e.g., related to education or document processing).
-   - No JavaScript is included since the homepage is static, but it can be extended if dynamic features are needed.
-
-### How to Use
-- **Save the Homepage**: Save this code as `index.html` in your project directory.
-- **Link to Application**: Ensure the original code is saved as `app.html` (or update the CTA button's `href` to match the actual application file or route).
-- **Host the Files**: Serve both files via a web server (e.g., localhost or a hosting service) to test the homepage and application flow.
-- **Assets**: The code uses Google Fonts for Roboto and a CDN for the background image. Host the image locally if offline access is needed.
-
-If you need modifications (e.g., a different background image, additional features, or integration with the original code), let me know! Would you like me to generate a preview image of the homepage design or make further adjustments?
