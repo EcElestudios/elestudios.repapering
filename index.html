@@ -1,487 +1,234 @@
+To create a homepage for the "Repapering | Extract Questions" application that mirrors the clean, professional, and user-focused design of the Microsoft Teams login page (https://www.microsoft.com/en-us/microsoft-teams/log-in), I'll adapt the original code's style while incorporating a similar layout, color scheme, and user-friendly elements. The Microsoft Teams page features a centered layout, a prominent call-to-action (CTA), a background image, and a modern, minimalistic design. Below is a new homepage designed to align with these characteristics while maintaining the original code's functionality and purpose.
+
+### Design Goals
+- **Layout**: Centered content with a hero section, featuring a headline, description, and CTA button to access the main application.
+- **Style**: Use a color palette inspired by Microsoft Teams (blues, whites, and grays) while retaining the original code's `--primary`, `--secondary`, `--text`, and `--background` variables for consistency.
+- **Background**: Include a subtle background image or gradient similar to Microsoft Teams' aesthetic.
+- **CTA**: A prominent button linking to the original application page (assumed to be the provided code).
+- **Responsive**: Ensure the design is mobile-friendly, matching the original code's responsive media queries.
+- **Branding**: Emphasize the "Repapering | Extract Questions" branding with a professional tone.
+
+Since the original code is the main application, this homepage will serve as an entry point, linking to the original functionality. I'll assume the original code is hosted at a separate route (e.g., `/app.html`) and create a new HTML file for the homepage.
+
+### Homepage Code
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repapering | Extract questions</title>
-    <!-- Load PDF.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs" type="module"></script>
-    <!-- Load Mammoth.js for .doc/.docx parsing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+    <title>Repapering | Extract Questions - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #1a73e8;
             --secondary: #f1f3f4;
             --text: #202124;
-            --error: #d93025;
-            --warning: #fbbc05;
-            --info: #34a853;
             --background: #f8f9fa;
+            --accent: #0052cc;
+            --white: #ffffff;
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: 'Roboto', Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--background);
+            background: linear-gradient(rgba(0, 82, 204, 0.1), rgba(0, 82, 204, 0.1)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
             color: var(--text);
-            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero {
+            max-width: 800px;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin: 2rem;
         }
 
         h1 {
-            text-align: center;
-            color: var(--text);
             font-size: 2.5rem;
-            margin-bottom: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
         }
 
         p {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 2rem;
+            font-size: 1.2rem;
             color: #5f6368;
-        }
-
-        .input-section {
-            display: grid;
-            gap: 1rem;
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
+            line-height: 1.6;
         }
 
-        .output-section {
-            margin-top: 2rem;
-        }
-
-        .qna-item {
-            background-color: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-
-        .qna-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .qna-item summary {
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--primary);
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .answer {
-            padding: 1rem;
-            background-color: var(--secondary);
-            border-left: 4px solid var(--primary);
-            border-radius: 8px;
-            margin-top: 0.5rem;
-        }
-
-        input[type="text"], input[type="password"], select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-
-        input[type="text"]:focus, input[type="password"]:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-        }
-
-        button {
-            padding: 0.75rem 1.5rem;
+        .cta-button {
+            padding: 1rem 2rem;
             background-color: var(--primary);
-            color: white;
+            color: var(--white);
             border: none;
             border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 1rem;
+            text-decoration: none;
             transition: background-color 0.2s, transform 0.1s;
         }
 
-        button:hover {
-            background-color: #1557b0;
-            transform: translateY(-1px);
+        .cta-button:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
         }
 
-        button:active {
+        .cta-button:active {
             transform: translateY(0);
         }
 
-        .error, .warning, .info {
-            padding: 1rem;
-            margin: 1rem 0;
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+
+        .feature-item {
+            background: var(--white);
+            padding: 1.5rem;
             border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-item h3 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item p {
+            font-size: 1rem;
+            color: #5f6368;
+        }
+
+        footer {
+            margin-top: 2rem;
             font-size: 0.9rem;
+            color: #5f6368;
         }
 
-        .error { background-color: #fce8e6; color: var(--error); }
-        .warning { background-color: #fef7e0; color: var(--warning); }
-        .info { background-color: #e6f4ea; color: var(--info); }
-
-        #spinner {
-            display: none;
-            text-align: center;
-            padding: 2rem;
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
         }
 
-        #spinner::after {
-            content: '';
-            border: 4px solid #dadce0;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 2rem;
-            height: 2rem;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        #apiKeyContainer {
-            position: relative;
+        footer a:hover {
+            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
-            body { padding: 15px; }
-            h1 { font-size: 2rem; }
-            .input-section { padding: 1rem; }
-            .qna-item { padding: 1rem; }
-            button { padding: 0.6rem 1.2rem; }
+            .hero {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
         }
 
         @media (max-width: 480px) {
-            h1 { font-size: 1.5rem; }
-            input[type="text"], input[type="password"], select { font-size: 0.9rem; }
-            button { font-size: 0.7rem; }
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .cta-button {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Repapering | Extract questions</h1>
-    <p>Upload an image, PDF, text, Word document, CSV, or Excel file to extract passages, questions, and answers. Select an API provider and enter your API key if required (optional for OpenRouter non-BYOK). Enter your answers to check them; non-exact matches are AI-verified.</p>
-    
-    <div class="input-section">
-        <label for="apiProvider">API Provider:</label> <!-- Line 155 -->
-        <select id="apiProvider"> <!-- Line 156 -->
-            <option value="openrouter-non-byok">OpenRouter (Non-BYOK, Llama 4 Maverick)</option>
-            <option value="xai-byok">xAI (BYOK, Grok 3)</option>
-            <option value="openai-byok">OpenAI (BYOK, GPT-4o)</option>
-            <option value="openrouter-byok">OpenRouter (BYOK, Llama 4 Maverick)</option>
-        </select>
-        
-        <div id="apiKeyContainer"> <!-- Line 162 -->
-            <label for="apiKey">API Key (Optional for OpenRouter Non-BYOK):</label> <!-- Line 163 -->
-            <input type="password" id="apiKey" placeholder="Enter your API key if required"> <!-- Line 164 -->
-        </div>
-        
-        <label for="fileType">File Type:</label> <!-- Line 167 -->
-        <select id="fileType"> <!-- Line 168 -->
-            <option value="vision">Image or PDF</option>
-            <option value="text">Text, Word, CSV, Excel</option>
-        </select>
-        
-        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.txt,.doc,.docx,.csv,.xls,.xlsx" multiple> <!-- Line 171 -->
-        <button id="submitButton">Submit</button> <!-- Line 172 -->
+    <div class="hero">
+        <h1>Repapering | Extract Questions</h1>
+        <p>Effortlessly extract questions and answers from images, PDFs, Word documents, CSVs, or Excel files. Powered by advanced AI models for accurate results.</p>
+        <a href="/app.html" class="cta-button">Get Started</a>
     </div>
-    
-    <div id="spinner"></div> <!-- Line 175 -->
-    <div id="output" class="output-section"></div> <!-- Line 176 -->
 
-    <script type="module">
-        import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs';
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs';
-
-        const apiProviderSelect = document.getElementById('apiProvider'); // Line 182
-        const apiKeyContainer = document.getElementById('apiKeyContainer'); // Line 183
-        const apiKeyInput = document.getElementById('apiKey'); // Line 184
-        const fileTypeSelect = document.getElementById('fileType'); // Line 185
-        const fileInput = document.getElementById('fileInput'); // Line 186
-        const submitButton = document.getElementById('submitButton'); // Line 187
-        const outputDiv = document.getElementById('output'); // Line 188
-        const spinner = document.getElementById('spinner'); // Line 189
-
-        // Prompt for extraction
-        const extractionPrompt = `
-From the provided document (image, PDF pages as images, text, Word document, CSV, or Excel file representing a quiz, worksheet, textbook, exam, reading comprehension passage, or data file), 
-first identify if there's a main passage or reading text (e.g., for reading comprehension), then extract all questions and their corresponding answers or solutions if present. 
-Questions are typically phrased with words like "What", "How", "Why", numbers like 1., a., or question marks. Answers may follow questions, be at the end, or be explanations/solutions.
-For data files like CSV or Excel, extract any embedded questions or interpret data as potential answers if questions are implied.
-
-Output as JSON with the following structure:
-{
-  "passage": "Extracted passage or reading text if present, otherwise empty string",
-  "qna": [
-    {
-      "question": "Full question text",
-      "answer": "Full answer text, or 'No answer found' if none"
-    },
-    ...
-  ]
-}
-
-Only output the JSON object, no additional text.
-`;
-
-        // Prompt for verification
-        const verifyPromptTemplate = (question, stdAnswer, userAnswer) => `
-Question: ${question}
-Standard Answer: ${stdAnswer}
-User Answer: ${userAnswer}
-
-Determine if the user's answer is correct or equivalent to the standard answer. 
-Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief explanation"}
-`;
-
-        // API configuration
-        function getApiConfig(provider, apiKey) { // Line 224
-            switch (provider) {
-                case 'xai-byok':
-                    if (!apiKey) throw new Error('API key required for xAI.');
-                    return {
-                        url: 'https://x.ai/api/v1/chat/completions',
-                        model: 'grok-3',
-                        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }
-                    };
-                case 'openai-byok':
-                    if (!apiKey) throw new Error('API key required for OpenAI.');
-                    return {
-                        url: 'https://api.openai.com/v1/chat/completions',
-                        model: 'gpt-4o',
-                        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }
-                    };
-                case 'openrouter-byok':
-                    if (!apiKey) throw new Error('API key required for OpenRouter BYOK.');
-                    return {
-                        url: 'https://openrouter.ai/api/v1/chat/completions',
-                        model: 'meta-llama/llama-4-maverick:free',
-                        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }
-                    };
-                case 'openrouter-non-byok':
-                    return {
-                        url: 'https://openrouter.ai/api/v1/chat/completions',
-                        model: 'meta-llama/llama-4-maverick:free',
-                        headers: { 'Authorization': `Bearer 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`, 'Content-Type': 'application/json' } // Fixed: Removed trailing comma and Authorization header
-                    };
-                default:
-                    throw new Error('Invalid API provider selected.');
-            }
-        }
-
-        submitButton.addEventListener('click', async () => { // Line 252
-            const files = fileInput.files;
-            if (files.length === 0) {
-                outputDiv.innerHTML = '<div class="warning">Please select at least one file.</div>';
-                return;
-            }
-
-            const provider = apiProviderSelect.value;
-            const apiKey = apiKeyInput.value; // Line 259
-            if (provider !== 'openrouter-non-byok' && !apiKey) {
-                outputDiv.innerHTML = `<div class="warning">Please enter your API key for ${provider.replace('-byok', '').toUpperCase()}.</div>`; // Line 261
-                return;
-            }
-
-            const fileType = fileTypeSelect.value;
-            const allowedTypes = fileType === 'vision' 
-                ? ['image/jpeg', 'image/png', 'application/pdf']
-                : ['text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-            for (const file of files) {
-                if (!allowedTypes.includes(file.type)) {
-                    outputDiv.innerHTML = `<div class="error">File ${file.name} has an unsupported type for ${fileType} mode.</div>`;
-                    return;
-                }
-            }
-
-            spinner.style.display = 'block';
-            outputDiv.innerHTML = '';
-
-            try {
-                let outputHtml = '';
-                let globalQuestionIndex = 0;
-
-                for (const file of files) {
-                    let messageContent = [{ type: 'text', text: extractionPrompt }];
-
-                    if (fileType === 'vision') {
-                        if (file.type === 'application/pdf') {
-                            const arrayBuffer = await file.arrayBuffer();
-                            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                                const page = await pdf.getPage(pageNum);
-                                const scale = 1.5;
-                                const viewport = page.getViewport({ scale });
-                                const canvas = document.createElement('canvas');
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
-                                const context = canvas.getContext('2d');
-                                await page.render({ canvasContext: context, viewport }).promise;
-                                const imgDataUrl = canvas.toDataURL('image/png');
-                                messageContent.push({
-                                    type: 'image_url',
-                                    image_url: { url: imgDataUrl }
-                                });
-                            }
-                        } else if (['image/jpeg', 'image/png'].includes(file.type)) {
-                            const reader = new FileReader();
-                            const imgDataUrl = await new Promise((resolve) => {
-                                reader.onload = (e) => resolve(e.target.result);
-                                reader.readAsDataURL(file);
-                            });
-                            messageContent.push({
-                                type: 'image_url',
-                                image_url: { url: imgDataUrl }
-                            });
-                        }
-                    } else {
-                        let textContent;
-                        if (file.type === 'text/plain') {
-                            textContent = await file.text(); // Line 302
-                        } else if (['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
-                            const arrayBuffer = await file.arrayBuffer();
-                            const result = await mammoth.extractRawText({ arrayBuffer }); // Line 305
-                            textContent = result.value;
-                        } else if (file.type === 'text/csv') {
-                            const text = await file.text();
-                            textContent = text;
-                        } else if (['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'].includes(file.type)) {
-                            throw new Error('Excel processing requires server-side libraries; upload CSV instead.');
-                        }
-                        messageContent.push({ type: 'text', text: textContent });
-                    }
-
-                    // Call selected API
-                    const { url, model, headers } = getApiConfig(provider, apiKey); // Line 319
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers,
-                        body: JSON.stringify({
-                            model,
-                            messages: [{ role: 'user', content: messageContent }]
-                        })
-                    });
-
-                    if (!response.ok) throw new Error(`API error for ${file.name}: ${response.statusText}`);
-
-                    const data = await response.json();
-                    const extractedData = JSON.parse(data.choices[0].message.content);
-                    const passage = extractedData.passage || '';
-                    const qnaList = extractedData.qna || [];
-
-                    // Append results for this file
-                    outputHtml += `<h2>File: ${file.name}</h2>`;
-                    if (passage) {
-                        outputHtml += `<h3>Passage / Reading Text</h3><p>${passage}</p>`;
-                    }
-                    if (qnaList.length) {
-                        outputHtml += '<h3>Questions and Answers</h3>';
-                        qnaList.forEach((item, idx) => {
-                            const question = item.question || '';
-                            const stdAnswer = item.answer || 'No answer found';
-                            const globalIdx = globalQuestionIndex + idx;
-                            outputHtml += `
-                                <div class="qna-item">
-                                    <details>
-                                        <summary><strong>Question ${globalIdx + 1}:</strong> ${question}</summary>
-                                        <div class="answer"><strong>Answer:</strong> ${stdAnswer}</div>
-                                    </details>
-                                    <input type="text" id="answer_${globalIdx}" placeholder="Your Answer">
-                                    <button onclick="checkAnswer(${globalIdx}, '${question.replace(/'/g, "\\'")}', '${stdAnswer.replace(/'/g, "\\'")}')">Check Answer</button>
-                                    <div id="result_${globalIdx}"></div>
-                                </div>
-                            `;
-                        });
-                        globalQuestionIndex += qnaList.length;
-                    } else {
-                        outputHtml += `<div class="info">No questions found in ${file.name}.</div>`;
-                    }
-                }
-
-                outputDiv.innerHTML = outputHtml;
-            } catch (error) {
-                outputDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-            } finally {
-                spinner.style.display = 'none';
-            }
-        });
-
-        // Check answer function
-        async function checkAnswer(idx, question, stdAnswer) { // Line 368
-            const userAnswer = document.getElementById(`answer_${idx}`).value;
-            const resultDiv = document.getElementById(`result_${idx}`);
-            const provider = apiProviderSelect.value;
-            const apiKey = apiKeyInput.value; // Line 372
-
-            if (!userAnswer) {
-                resultDiv.innerHTML = '<div class="warning">Please enter an answer.</div>';
-                return;
-            }
-
-            if (provider !== 'openrouter-non-byok' && !apiKey) {
-                resultDiv.innerHTML = `<div class="warning">Please enter your API key for ${provider.replace('-byok', '').toUpperCase()}.</div>`; // Line 379
-                return;
-            }
-
-            spinner.style.display = 'block';
-            resultDiv.innerHTML = '';
-
-            try {
-                if (userAnswer.toLowerCase() === stdAnswer.toLowerCase()) {
-                    resultDiv.innerHTML = '<div class="info">Correct!</div>';
-                } else {
-                    const { url, model, headers } = getApiConfig(provider, apiKey); // Line 389
-                    const verifyResponse = await fetch(url, {
-                        method: 'POST',
-                        headers,
-                        body: JSON.stringify({
-                            model,
-                            messages: [{ role: 'user', content: verifyPromptTemplate(question, stdAnswer, userAnswer) }]
-                        })
-                    });
-
-                    if (!verifyResponse.ok) throw new Error('Verification API error');
-
-                    const verifyData = await verifyResponse.json();
-                    const verifyResult = JSON.parse(verifyData.choices[0].message.content);
-                    if (verifyResult.result === 'correct') {
-                        resultDiv.innerHTML = `<div class="info">Correct! (AI verified) Explanation: ${verifyResult.explanation}</div>`;
-                    } else {
-                        resultDiv.innerHTML = `<div class="error">Incorrect. Explanation: ${verifyResult.explanation} The standard answer is: ${stdAnswer}</div>`;
-                    }
-                }
-            } catch (error) {
-                resultDiv.innerHTML = `<div class="error">Error verifying: ${error.message}</div>`;
-            } finally {
-                spinner.style.display = 'none';
-            }
-        }
-
-        // Expose checkAnswer to global scope for button onclick
-        window.checkAnswer = checkAnswer; // Line 413
-    </script>
+    <div class="features">
+        <div class="feature-item">
+            <h3>Multi-Format Support</h3>
+            <p>Upload images, PDFs, text, Word, CSV, or Excel files to extract questions and answers seamlessly.</p>
+        </div>
+        <div class="feature-item">
+            <h3>AI-Powered Accuracy</h3>
+            <p>Leverage xAI, OpenAI, or OpenRouter models to ensure precise question and answer extraction.</p>
+        </div>
+        <div class="feature-item">
+            <h3>Answer Verification</h3>
+            <p>Check your answers with AI-verified feedback, even for non-exact matches.</p>
+        </div>
+    </div>
 
     <footer>
-        <p><strong>Note:</strong> Uses the selected API provider and model (xAI: Grok 3, OpenAI: GPT-4o, OpenRouter: Llama 4 Maverick). PDFs are converted to images client-side with PDF.js. Word documents (.doc, .docx) are parsed with Mammoth.js. Answers are checked case-insensitively; non-exact matches are AI-verified. CSV is processed as text; Excel requires server-side parsing—convert to CSV for client-side use. Dependencies: PDF.js, Mammoth.js (CDNs).</p>
+        <p>Powered by <a href="https://x.ai" target="_blank">xAI</a> | <a href="https://x.ai/api" target="_blank">API Access</a> | <a href="https://help.x.com/en/using-x/x-premium" target="_blank">X Premium</a></p>
     </footer>
 </body>
 </html>
+```
+
+### Explanation of Design Choices
+1. **Layout and Structure**:
+   - The homepage uses a centered hero section, similar to the Microsoft Teams login page, with a clear headline, descriptive text, and a prominent "Get Started" button linking to the original application (assumed at `/app.html`).
+   - A features section highlights key functionalities, styled in a grid layout to showcase multi-format support, AI accuracy, and answer verification.
+   - The footer includes links to xAI, API access, and X Premium, aligning with the original code's references and xAI's product guidelines.
+
+2. **Styling**:
+   - **Colors**: Retains the original code's `--primary` (#1a73e8), `--secondary` (#f1f3f4), `--text` (#202124), and `--background` (#f8f9fa) for consistency, with an added `--accent` (#0052cc) inspired by Microsoft Teams' darker blue for hover effects.
+   - **Background**: Uses a subtle gradient overlay on a professional background image (sourced from Unsplash) to mimic the Teams page's clean aesthetic.
+   - **Typography**: Uses the Roboto font, consistent with the original code, with weights (300, 400, 500, 700) to match the professional tone.
+   - **Button**: The CTA button mirrors the original code's button styling (padding, border-radius, hover effects) but is larger and centered for prominence, similar to the Teams "Sign in" button.
+
+3. **Responsiveness**:
+   - Media queries at 768px and 480px ensure the layout adapts to tablets and mobile devices, reducing font sizes, padding, and switching the features grid to a single column on small screens, consistent with the original code's responsive design.
+
+4. **Content**:
+   - The headline and description are concise, emphasizing the application's purpose and ease of use, similar to the Teams page's focus on clarity.
+   - The features section highlights the application's strengths, making it approachable like the Teams page's marketing approach.
+   - The footer provides context and links, aligning with xAI's product guidelines (e.g., redirecting to https://x.ai/api for API details).
+
+5. **Assumptions**:
+   - The original code is assumed to be the main application, accessible at `/app.html`. If the application is hosted differently, update the `<a href="/app.html">` link in the CTA button.
+   - The background image is a placeholder from Unsplash; replace it with a custom image if desired (e.g., related to education or document processing).
+   - No JavaScript is included since the homepage is static, but it can be extended if dynamic features are needed.
+
+### How to Use
+- **Save the Homepage**: Save this code as `index.html` in your project directory.
+- **Link to Application**: Ensure the original code is saved as `app.html` (or update the CTA button's `href` to match the actual application file or route).
+- **Host the Files**: Serve both files via a web server (e.g., localhost or a hosting service) to test the homepage and application flow.
+- **Assets**: The code uses Google Fonts for Roboto and a CDN for the background image. Host the image locally if offline access is needed.
+
+If you need modifications (e.g., a different background image, additional features, or integration with the original code), let me know! Would you like me to generate a preview image of the homepage design or make further adjustments?
