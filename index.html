@@ -158,6 +158,16 @@
 
         #apiKeyContainer {
             display: none;
+            position: relative;
+        }
+
+        #toggleApiKey {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0.5rem;
+            font-size: 0.8rem;
         }
 
         @media (max-width: 768px) {
@@ -172,6 +182,7 @@
             h1 { font-size: 1.5rem; }
             input[type="text"], input[type="password"], select { font-size: 0.9rem; }
             button { font-size: 0.9rem; }
+            #toggleApiKey { font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -180,48 +191,61 @@
     <p>Upload an image, PDF, text, CSV, or Excel file to extract passages, questions, and answers. Select an API provider and enter your API key if required. Enter your answers to check them; non-exact matches are AI-verified.</p>
     
     <div class="input-section">
-        <label for="apiProvider">API Provider:</label>
-        <select id="apiProvider" onchange="toggleApiKeyInput()">
+        <label for="apiProvider">API Provider:</label> <!-- Line 149 -->
+        <select id="apiProvider" onchange="toggleApiKeyInput()"> <!-- Line 150 -->
             <option value="openrouter-non-byok">OpenRouter (Non-BYOK, Llama 4 Maverick)</option>
             <option value="xai-byok">xAI (BYOK, Grok 3)</option>
             <option value="openai-byok">OpenAI (BYOK, GPT-4o)</option>
             <option value="openrouter-byok">OpenRouter (BYOK, Llama 4 Maverick)</option>
         </select>
         
-        <div id="apiKeyContainer">
-            <label for="apiKey">API Key:</label>
-            <input type="password" id="apiKey" placeholder="Enter your API key">
+        <div id="apiKeyContainer"> <!-- Line 156 -->
+            <label for="apiKey">API Key for Selected Provider:</label> <!-- Line 157 -->
+            <input type="password" id="apiKey" placeholder="Enter your API key"> <!-- Line 158 -->
+            <button type="button" id="toggleApiKey" onclick="toggleApiKeyVisibility()">Show</button> <!-- Line 159 -->
         </div>
         
-        <label for="fileType">File Type:</label>
-        <select id="fileType">
+        <label for="fileType">File Type:</label> <!-- Line 162 -->
+        <select id="fileType"> <!-- Line 163 -->
             <option value="vision">Image or PDF</option>
             <option value="text">Text, CSV, Excel</option>
         </select>
         
-        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.txt,.csv,.xls,.xlsx">
+        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.txt,.csv,.xls,.xlsx"> <!-- Line 168 -->
     </div>
     
-    <div id="spinner"></div>
-    <div id="output" class="output-section"></div>
+    <div id="spinner"></div> <!-- Line 171 -->
+    <div id="output" class="output-section"></div> <!-- Line 172 -->
 
     <script type="module">
         import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs';
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs';
 
-        const apiProviderSelect = document.getElementById('apiProvider');
-        const apiKeyContainer = document.getElementById('apiKeyContainer');
-        const apiKeyInput = document.getElementById('apiKey');
-        const fileTypeSelect = document.getElementById('fileType');
-        const fileInput = document.getElementById('fileInput');
-        const outputDiv = document.getElementById('output');
-        const spinner = document.getElementById('spinner');
+        const apiProviderSelect = document.getElementById('apiProvider'); // Line 178
+        const apiKeyContainer = document.getElementById('apiKeyContainer'); // Line 179
+        const apiKeyInput = document.getElementById('apiKey'); // Line 180
+        const toggleApiKeyButton = document.getElementById('toggleApiKey'); // Line 181
+        const fileTypeSelect = document.getElementById('fileType'); // Line 182
+        const fileInput = document.getElementById('fileInput'); // Line 183
+        const outputDiv = document.getElementById('output'); // Line 184
+        const spinner = document.getElementById('spinner'); // Line 185
 
         // Toggle API key input visibility
-        function toggleApiKeyInput() {
+        function toggleApiKeyInput() { // Line 188
             apiKeyContainer.style.display = apiProviderSelect.value === 'openrouter-non-byok' ? 'none' : 'block';
         }
-        toggleApiKeyInput(); // Initial call
+        toggleApiKeyInput(); // Initial call // Line 191
+
+        // Toggle API key visibility
+        function toggleApiKeyVisibility() { // Line 194
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleApiKeyButton.textContent = 'Hide';
+            } else {
+                apiKeyInput.type = 'password';
+                toggleApiKeyButton.textContent = 'Show';
+            }
+        }
 
         // Prompt for extraction
         const extractionPrompt = `
@@ -256,7 +280,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
 `;
 
         // API configuration
-        const getApiConfig = (provider, apiKey) => {
+        function getApiConfig(provider, apiKey) { // Line 237
             switch (provider) {
                 case 'xai-byok':
                     return {
@@ -280,21 +304,21 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
                     return {
                         url: 'https://openrouter.ai/api/v1/chat/completions',
                         model: 'meta-llama/llama-4-maverick:free',
-                        headers: { 'Authorization': `Bearer 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`, 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' }
                     };
                 default:
                     throw new Error('Invalid API provider selected.');
             }
-        };
+        }
 
-        fileInput.addEventListener('change', async (event) => {
+        fileInput.addEventListener('change', async (event) => { // Line 265
             const file = event.target.files[0];
             if (!file) return;
 
             const provider = apiProviderSelect.value;
-            const apiKey = apiKeyInput.value;
+            const apiKey = apiKeyInput.value; // Line 270
             if (provider !== 'openrouter-non-byok' && !apiKey) {
-                outputDiv.innerHTML = '<div class="warning">Please enter your API key for the selected provider.</div>';
+                outputDiv.innerHTML = '<div class="warning">Please enter your API key for the selected provider.</div>'; // Line 272
                 return;
             }
 
@@ -352,7 +376,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
                 }
 
                 // Call selected API
-                const { url, model, headers } = getApiConfig(provider, apiKey);
+                const { url, model, headers } = getApiConfig(provider, apiKey); // Line 326
                 const response = await fetch(url, {
                     method: 'POST',
                     headers,
@@ -404,11 +428,11 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
         });
 
         // Check answer function
-        async function checkAnswer(idx, question, stdAnswer) {
+        async function checkAnswer(idx, question, stdAnswer) { // Line 375
             const userAnswer = document.getElementById(`answer_${idx}`).value;
             const resultDiv = document.getElementById(`result_${idx}`);
             const provider = apiProviderSelect.value;
-            const apiKey = apiKeyInput.value;
+            const apiKey = apiKeyInput.value; // Line 379
 
             if (!userAnswer) {
                 resultDiv.innerHTML = '<div class="warning">Please enter an answer.</div>';
@@ -416,7 +440,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
             }
 
             if (provider !== 'openrouter-non-byok' && !apiKey) {
-                resultDiv.innerHTML = '<div class="warning">Please enter your API key for the selected provider.</div>';
+                resultDiv.innerHTML = '<div class="warning">Please enter your API key for the selected provider.</div>'; // Line 386
                 return;
             }
 
@@ -427,7 +451,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
                 if (userAnswer.toLowerCase() === stdAnswer.toLowerCase()) {
                     resultDiv.innerHTML = '<div class="info">Correct!</div>';
                 } else {
-                    const { url, model, headers } = getApiConfig(provider, apiKey);
+                    const { url, model, headers } = getApiConfig(provider, apiKey); // Line 396
                     const verifyResponse = await fetch(url, {
                         method: 'POST',
                         headers,
@@ -455,7 +479,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
         }
 
         // Expose checkAnswer to global scope for button onclick
-        window.checkAnswer = checkAnswer;
+        window.checkAnswer = checkAnswer; // Line 420
     </script>
 
     <footer>
