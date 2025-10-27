@@ -272,7 +272,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
 `;
 
         // API configuration
-        function getApiConfig(provider, apiKey) { // Line 237
+        function getApiConfig(provider, apiKey) { 
             switch (provider) {
                 case 'xai-byok':
                     if (!apiKey) throw new Error('API key required for xAI.');
