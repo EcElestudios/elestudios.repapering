@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question and Answer Extractor</title>
+    <title>Repapering|Extract questions from papers</title>
     <!-- Load PDF.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs" type="module"></script>
+    <!-- Load Mammoth.js for .doc/.docx parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
     <style>
         :root {
             --primary: #1a73e8;
@@ -157,7 +159,6 @@
         }
 
         #apiKeyContainer {
-            display: none;
             position: relative;
         }
 
@@ -181,60 +182,53 @@
         @media (max-width: 480px) {
             h1 { font-size: 1.5rem; }
             input[type="text"], input[type="password"], select { font-size: 0.9rem; }
-            button { font-size: 0.9rem; }
-            #toggleApiKey { font-size: 0.7rem; }
+            button { font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
-    <h1>Question and Answer Extractor</h1>
-    <p>Upload an image, PDF, text, CSV, or Excel file to extract passages, questions, and answers. Select an API provider and enter your API key if required. Enter your answers to check them; non-exact matches are AI-verified.</p>
+    <h1>Repapering|Extract questions</h1>
+    <p>Upload an image, PDF, text, Word document, CSV, or Excel file to extract passages, questions, and answers. Select an API provider and enter your API key if required (optional for OpenRouter non-BYOK). Enter your answers to check them; non-exact matches are AI-verified.</p>
     
     <div class="input-section">
-        <label for="apiProvider">API Provider:</label> <!-- Line 149 -->
-        <select id="apiProvider" onchange="toggleApiKeyInput()"> <!-- Line 150 -->
+        <label for="apiProvider">API Provider:</label> <!-- Line 155 -->
+        <select id="apiProvider"> <!-- Line 156 -->
             <option value="openrouter-non-byok">OpenRouter (Non-BYOK, Llama 4 Maverick)</option>
             <option value="xai-byok">xAI (BYOK, Grok 3)</option>
             <option value="openai-byok">OpenAI (BYOK, GPT-4o)</option>
             <option value="openrouter-byok">OpenRouter (BYOK, Llama 4 Maverick)</option>
         </select>
         
-        <div id="apiKeyContainer"> <!-- Line 156 -->
-            <label for="apiKey">API Key for Selected Provider:</label> <!-- Line 157 -->
-            <input type="password" id="apiKey" placeholder="Enter your API key"> <!-- Line 158 -->
-            <button type="button" id="toggleApiKey" onclick="toggleApiKeyVisibility()">Show</button> <!-- Line 159 -->
+        <div id="apiKeyContainer"> <!-- Line 162 -->
+            <label for="apiKey">API Key (Optional for OpenRouter Non-BYOK):</label> <!-- Line 163 -->
+            <input type="password" id="apiKey" placeholder="Enter your API key if required"> <!-- Line 164 -->
+            <button type="button" id="toggleApiKey" onclick="toggleApiKeyVisibility()">Show</button> <!-- Line 165 -->
         </div>
         
-        <label for="fileType">File Type:</label> <!-- Line 162 -->
-        <select id="fileType"> <!-- Line 163 -->
+        <label for="fileType">File Type:</label> <!-- Line 168 -->
+        <select id="fileType"> <!-- Line 169 -->
             <option value="vision">Image or PDF</option>
-            <option value="text">Text, CSV, Excel</option>
+            <option value="text">Text, Word, CSV, Excel</option>
         </select>
         
-        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.txt,.csv,.xls,.xlsx"> <!-- Line 168 -->
+        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.txt,.doc,.docx,.csv,.xls,.xlsx"> <!-- Line 174 -->
     </div>
     
-    <div id="spinner"></div> <!-- Line 171 -->
-    <div id="output" class="output-section"></div> <!-- Line 172 -->
+    <div id="spinner"></div> <!-- Line 177 -->
+    <div id="output" class="output-section"></div> <!-- Line 178 -->
 
     <script type="module">
         import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs';
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs';
 
-        const apiProviderSelect = document.getElementById('apiProvider'); // Line 178
-        const apiKeyContainer = document.getElementById('apiKeyContainer'); // Line 179
-        const apiKeyInput = document.getElementById('apiKey'); // Line 180
-        const toggleApiKeyButton = document.getElementById('toggleApiKey'); // Line 181
-        const fileTypeSelect = document.getElementById('fileType'); // Line 182
-        const fileInput = document.getElementById('fileInput'); // Line 183
-        const outputDiv = document.getElementById('output'); // Line 184
-        const spinner = document.getElementById('spinner'); // Line 185
-
-        // Toggle API key input visibility
-        function toggleApiKeyInput() { // Line 188
-            apiKeyContainer.style.display = apiProviderSelect.value === 'openrouter-non-byok' ? 'none' : 'block';
-        }
-        toggleApiKeyInput(); // Initial call // Line 191
+        const apiProviderSelect = document.getElementById('apiProvider'); // Line 184
+        const apiKeyContainer = document.getElementById('apiKeyContainer'); // Line 185
+        const apiKeyInput = document.getElementById('apiKey'); // Line 186
+        const toggleApiKeyButton = document.getElementById('toggleApiKey'); // Line 187
+        const fileTypeSelect = document.getElementById('fileType'); // Line 188
+        const fileInput = document.getElementById('fileInput'); // Line 189
+        const outputDiv = document.getElementById('output'); // Line 190
+        const spinner = document.getElementById('spinner'); // Line 191
 
         // Toggle API key visibility
         function toggleApiKeyVisibility() { // Line 194
@@ -249,7 +243,7 @@
 
         // Prompt for extraction
         const extractionPrompt = `
-From the provided document (image, PDF pages as images, text, CSV, or Excel file representing a quiz, worksheet, textbook, exam, reading comprehension passage, or data file), 
+From the provided document (image, PDF pages as images, text, Word document, CSV, or Excel file representing a quiz, worksheet, textbook, exam, reading comprehension passage, or data file), 
 first identify if there's a main passage or reading text (e.g., for reading comprehension), then extract all questions and their corresponding answers or solutions if present. 
 Questions are typically phrased with words like "What", "How", "Why", numbers like 1., a., or question marks. Answers may follow questions, be at the end, or be explanations/solutions.
 For data files like CSV or Excel, extract any embedded questions or interpret data as potential answers if questions are implied.
@@ -283,18 +277,21 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
         function getApiConfig(provider, apiKey) { // Line 237
             switch (provider) {
                 case 'xai-byok':
+                    if (!apiKey) throw new Error('API key required for xAI.');
                     return {
                         url: 'https://x.ai/api/v1/chat/completions',
                         model: 'grok-3',
                         headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }
                     };
                 case 'openai-byok':
+                    if (!apiKey) throw new Error('API key required for OpenAI.');
                     return {
                         url: 'https://api.openai.com/v1/chat/completions',
                         model: 'gpt-4o',
                         headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }
                     };
                 case 'openrouter-byok':
+                    if (!apiKey) throw new Error('API key required for OpenRouter BYOK.');
                     return {
                         url: 'https://openrouter.ai/api/v1/chat/completions',
                         model: 'meta-llama/llama-4-maverick:free',
@@ -318,7 +315,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
             const provider = apiProviderSelect.value;
             const apiKey = apiKeyInput.value; // Line 270
             if (provider !== 'openrouter-non-byok' && !apiKey) {
-                outputDiv.innerHTML = '<div class="warning">Please enter your API key for the selected provider.</div>'; // Line 272
+                outputDiv.innerHTML = `<div class="warning">Please enter your API key for ${provider.replace('-byok', '').toUpperCase()}.</div>`; // Line 272
                 return;
             }
 
@@ -363,7 +360,11 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
                 } else {
                     let textContent;
                     if (file.type === 'text/plain') {
-                        textContent = await file.text();
+                        textContent = await file.text(); // Line 310
+                    } else if (['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const result = await mammoth.extractRawText({ arrayBuffer }); // Line 313
+                        textContent = result.value;
                     } else if (file.type === 'text/csv') {
                         const text = await file.text();
                         textContent = text; // Simplified; for full CSV parsing, use PapaParse
@@ -376,7 +377,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
                 }
 
                 // Call selected API
-                const { url, model, headers } = getApiConfig(provider, apiKey); // Line 326
+                const { url, model, headers } = getApiConfig(provider, apiKey); // Line 327
                 const response = await fetch(url, {
                     method: 'POST',
                     headers,
@@ -428,11 +429,11 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
         });
 
         // Check answer function
-        async function checkAnswer(idx, question, stdAnswer) { // Line 375
+        async function checkAnswer(idx, question, stdAnswer) { // Line 376
             const userAnswer = document.getElementById(`answer_${idx}`).value;
             const resultDiv = document.getElementById(`result_${idx}`);
             const provider = apiProviderSelect.value;
-            const apiKey = apiKeyInput.value; // Line 379
+            const apiKey = apiKeyInput.value; // Line 380
 
             if (!userAnswer) {
                 resultDiv.innerHTML = '<div class="warning">Please enter an answer.</div>';
@@ -440,7 +441,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
             }
 
             if (provider !== 'openrouter-non-byok' && !apiKey) {
-                resultDiv.innerHTML = '<div class="warning">Please enter your API key for the selected provider.</div>'; // Line 386
+                resultDiv.innerHTML = `<div class="warning">Please enter your API key for ${provider.replace('-byok', '').toUpperCase()}.</div>`; // Line 387
                 return;
             }
 
@@ -451,7 +452,7 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
                 if (userAnswer.toLowerCase() === stdAnswer.toLowerCase()) {
                     resultDiv.innerHTML = '<div class="info">Correct!</div>';
                 } else {
-                    const { url, model, headers } = getApiConfig(provider, apiKey); // Line 396
+                    const { url, model, headers } = getApiConfig(provider, apiKey); // Line 397
                     const verifyResponse = await fetch(url, {
                         method: 'POST',
                         headers,
@@ -479,11 +480,11 @@ Respond with JSON: {"result": "correct" or "incorrect", "explanation": "Brief ex
         }
 
         // Expose checkAnswer to global scope for button onclick
-        window.checkAnswer = checkAnswer; // Line 420
+        window.checkAnswer = checkAnswer; // Line 421
     </script>
 
     <footer>
-        <p><strong>Note:</strong> Uses the selected API provider and model (xAI: Grok 3, OpenAI: GPT-4o, OpenRouter: Llama 4 Maverick). PDFs are converted to images client-side with PDF.js. Answers are checked case-insensitively; non-exact matches are AI-verified. CSV is processed as text; Excel requires server-side parsing—convert to CSV for client-side use. No external dependencies except PDF.js CDN.</p>
+        <p><strong>Note:</strong> Uses the selected API provider and model (xAI: Grok 3, OpenAI: GPT-4o, OpenRouter: Llama 4 Maverick). PDFs are converted to images client-side with PDF.js. Word documents (.doc, .docx) are parsed with Mammoth.js. Answers are checked case-insensitively; non-exact matches are AI-verified. CSV is processed as text; Excel requires server-side parsing—convert to CSV for client-side use. Dependencies: PDF.js, Mammoth.js (CDNs).</p>
     </footer>
 </body>
 </html>
